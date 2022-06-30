@@ -1,18 +1,11 @@
- <svg
-             class="icon-folder__closed"
-             width="20px"
-             version="1.1"
-             id="Layer_1"
-             xmlns="http://www.w3.org/2000/svg"
-             xmlns:xlink="http://www.w3.org/1999/xlink"
-             x="0px"
-             y="0px"
-             viewBox="0 0 512 512"
-             style="enable-background: new 0 0 512 512"
-             xml:space="preserve"
-           >
-             <path
-               fill="#008CFF"
-               d="M415.4,133.6c-5.3-9.4-13.2-13.5-23.8-13.5c-68.4,0.1-176.8,0-245.1,0c-11.1,0-15.1-4-15.2-15.1c0-10.3-4.5-14.8-14.8-14.8c-19.3,0-38.6,0-57.9,0c-2.9,0-5.9,0.2-8.7,0.9c-11.4,2.9-18.2,12.2-18.2,24.9c0,11.1,0,24.3,0,38.6h0v2.4c0,68.2,0,158.6,0,158.6s0,0,0,0V396c0,14.2,11.5,25.8,25.8,25.8h334.8c14.2,0,25.8-11.5,25.8-25.8V156.1c0-0.1,0-0.1,0-0.2C418,148.4,418.2,138.6,415.4,133.6z"
-             />
-           </svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 26.3.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#008CFF;}
+</style>
+<path class="st0" d="M16.2,5.2c-0.2-0.4-0.5-0.5-0.9-0.5c-2.7,0-7.3,0-9.6,0c-0.3,0-0.6-0.3-0.6-0.6c0-0.4-0.2-0.6-0.6-0.6
+	c-0.8,0-1.5,0-2.3,0c-0.1,0-0.2,0-0.3,0C1.5,3.7,1.2,4,1.2,4.5v10.9c0,0.6,0.5,1,1,1h13.1c0.6,0,1-0.5,1-1c0-2.6,0-9.3,0-9.4
+	C16.3,5.8,16.4,5.5,16.2,5.2z"/>
+</svg>

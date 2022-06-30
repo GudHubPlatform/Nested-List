@@ -121,7 +121,7 @@ class NestedList extends HTMLElement {
         if(!Boolean(childrenParent.length)) {
           instance.set_type(movedNodeParent, 'item')
         }
-        console.log(list)
+        
         //update items when moving for saving tree
         if(parent.parent !== parent.old_parent) {
           let itemsToUpdate = [];
