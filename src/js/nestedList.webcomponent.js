@@ -28,15 +28,16 @@ class NestedList extends HTMLElement {
     this.priorityId = this.getAttribute('priority-id');
   }
   async makeNestedList() {
-    let scheme = {"type":"array","id":1,"childs":[{"type":"property","id":3,"field_id": this.titleId,"property_name":"text","property_type":"field_value"},{"type":"property","id":4,"property_name":"parent","property_type":"field_value","field_id": this.parentId},{"type":"property","id":5,"property_name":"priority","property_type":"field_value","field_id": this.priorityId},{"type":"array","id":2,"childs":[{"type":"property","id":6,"property_name":"item_id","property_type":"variable","variable_type":"current_item"}],"is_static":1,"property_name":"data"},{"type":"property","id":7,"property_type":"static","property_name":"type","static_field_value":"item"}],"app_id": this.appId,"filter":[],"property_name":"nested_array"}
+    let scheme = {"type":"array","id":1,"childs":[{"type":"property","id":3,"field_id": this.titleId,"property_name":"text","property_type":"field_value"},{"type":"property","id":4,"property_name":"parent","property_type":"field_value","field_id": this.parentId},{"type":"array","id":2,"childs":[{"type":"property","id":6,"property_name":"item_id","property_type":"variable","variable_type":"current_item"}, {"type":"property","id":5,"property_name":"priority","property_type":"field_value","field_id": this.priorityId}],"is_static":1,"property_name":"data"},{"type":"property","id":7,"property_type":"static","property_name":"type","static_field_value":"item"}],"app_id": this.appId,"filter":[],"property_name":"nested_array"}
     let response = await gudhub.jsonConstructor(scheme);
     let generatedModel = response.nested_array.map(element => {
       element = element;
       element.item_id = element.data[0].item_id;
+      element.priority = element.data[0].priority;
       return element;
     })
     
-   let model = gudhub.makeNestedList(generatedModel, 'item_id', "parent");
+   let model = gudhub.makeNestedList(generatedModel, 'item_id', "parent", "", "priority");
 
    // set type of generated model
    function setType (model) {
@@ -86,7 +87,7 @@ class NestedList extends HTMLElement {
          }
         },
         
-        "plugins" : ["dnd", "types", "wholerow"]
+        "plugins" : ["dnd", "types", "wholerow", "state"]
       });
 
 
@@ -121,10 +122,10 @@ class NestedList extends HTMLElement {
         if(!Boolean(childrenParent.length)) {
           instance.set_type(movedNodeParent, 'item')
         }
-        
+
         //update items when moving for saving tree
+        let itemsToUpdate = [];
         if(parent.parent !== parent.old_parent) {
-          let itemsToUpdate = [];
           let [,itemId] = movedNode.data[0].item_id.split('.');
           let fieldValue;
           if(parentNode.id == '#') {
@@ -142,8 +143,24 @@ class NestedList extends HTMLElement {
           }
 
           itemsToUpdate.push(item)
-          gudhub.updateItems(self.appId, itemsToUpdate);
+        } else {
+          function sortArrayByIndex(tree) {
+            tree.forEach((element, index) => {
+              let [,itemId] = element.data[0].item_id.split('.');
+              element.data[0].priority = index;
+              itemsToUpdate.push({item_id: itemId, "fields": [{
+                "field_id": self.priorityId,
+                "field_value": index,
+              }]})
+
+              if(element.children)
+                sortArrayByIndex(element.children)
+            });
+            
+          }
+          sortArrayByIndex(list);
         }
+        gudhub.updateItems(self.appId, itemsToUpdate);
       });
     
     });
