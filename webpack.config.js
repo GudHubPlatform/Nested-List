@@ -8,9 +8,13 @@ export default {
     optimization: {
         minimize: false,
     },
-    mode: 'production',
+    performance: {
+        hints: false,
+        maxEntrypointSize: 512000,
+        maxAssetSize: 512000
+    },
     entry: {
-        main: './src/entry.js',
+        main: './src/js/nestedList_data.js',
     },
     output: {
         filename: '[name].js',
@@ -18,7 +22,6 @@ export default {
             type: 'module'
         }
     },
-    //target: 'es2020',
     module: {
         rules: [
             {
@@ -35,7 +38,11 @@ export default {
                     },
                     'sass-loader',
                 ],
-            }
+            },
+            {
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',
+              },
         ]
     },
     plugins: [
