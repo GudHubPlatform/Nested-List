@@ -1,5 +1,6 @@
 import $ from "jquery";
 import 'jstree';
+import '../scss/style.scss';
 import itemIcon from '../icons/file.svg';
 import folderIcon from '../icons/folder.svg';
 import folderOpenedIcon from '../icons/folder_opened.svg';
@@ -59,20 +60,23 @@ class NestedList extends HTMLElement {
 
   async init() {
     let self = this;
-    let data = await this.makeNestedList();
+    let tree = await this.makeNestedList();
     let list, parentNode, movedNodeParentId, movedNode;
     $(function() {
       $(self).jstree({
-        core : { "check_callback" : function (op, node, parent, position, more) {
+        core : { "check_callback" : function (operation, node, parent, position, more) {
           parentNode = parent;
           movedNodeParentId = node.parent;
           movedNode = node
 
+          let currentTarget = $(self).jstree(true).get_node(more.ref, true);
+          $(currentTarget).removeClass('droped-zone');
+          if(position) $(currentTarget).addClass('droped-zone');
+
           //we need return true if we want to allow move
           return true;
         },
-          
-          data : data
+          data : tree
         },
           "types" : {
           
@@ -110,6 +114,11 @@ class NestedList extends HTMLElement {
         $(self).on('close_node.jstree', function (event, data) {
             data.instance.set_type(data.node, 'folder');
         });
+        
+        //remove selection on click
+        $(self).on("select_node.jstree", function (node, selected, event) {
+          $(self).jstree(true).deselect_all();
+        })
 
       $(self).on("move_node.jstree", function (node, parent) {
         list = $(self).jstree(true).get_json('#', {flat:false})

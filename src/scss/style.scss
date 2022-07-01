@@ -1,6 +1,21 @@
 @import '~jstree/dist/themes/default/style.css';
-.jstree-default {
-  .jstree-themeicon-custom {
-    background-size: 100%!important;
+nested-list {
+  .jstree-default {
+    .jstree-themeicon-custom {
+      background-size: 100%!important;
+    }
   }
+ 
+  .jstree-children {
+    .droped-zone {
+      .jstree-wholerow-hovered {
+        border-bottom: 3px solid #beebff;
+        background: transparent!important;
+      }
+    }
+  }
+  .jstree-anchor:hover {
+    padding: 0 4px 0 1px;
+  }
+
 }
