@@ -14,13 +14,6 @@ class NestedList extends HTMLElement {
     this.priorityId;
     this.fieldModel;
   }
-  connectedCallback() {
-    setTimeout(() => {
-      this.getAttributes();
-      if(this.appId && this.titleId && this.parentId) this.init();
-    }, 0);
-    
-  }
 
   getAttributes() {
     this.appId = this.getAttribute('app-id');
@@ -29,11 +22,25 @@ class NestedList extends HTMLElement {
     this.priorityId = this.getAttribute('priority-id');
     this.fieldModel = this.getAttribute('field-model');
   }
+
+  static get observedAttributes() {
+    return ['app-id', 'field-model', 'title-id'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if(name == 'app-id' && newValue.indexOf('{{') == -1) {
+      setTimeout(() => {
+        this.getAttributes();
+        if(this.appId && this.parentId && this.titleId)
+          this.init();
+      }, 0);
+    }
+  }
+
   async makeNestedList() {
     let scheme = {"type":"array","id":1,"childs":[{"type":"property","id":3,"field_id": this.titleId,"property_name":"text","property_type":"field_value"},{"type":"property","id":4,"property_name":"parent","property_type":"field_value","field_id": this.parentId},{"type":"array","id":2,"childs":[{"type":"property","id":6,"property_name":"item_id","property_type":"variable","variable_type":"current_item"}, {"type":"property","id":5,"property_name":"priority","property_type":"field_value","field_id": this.priorityId}],"is_static":1,"property_name":"data"},{"type":"property","id":7,"property_type":"static","property_name":"type","static_field_value":"item"}],"app_id": this.appId,"filter":[],"property_name":"nested_array"}
     let response = await gudhub.jsonConstructor(scheme);
     let generatedModel = response.nested_array.map(element => {
-      element = element;
       element.item_id = element.data[0].item_id;
       element.priority = element.data[0].priority;
       return element;
@@ -190,7 +197,6 @@ class NestedList extends HTMLElement {
       app_id: this.fieldModel.send_message.app_id,
       field_id: this.fieldModel.send_message.field_id,
     }
-    console.log(address)
 
     gudhub.destroy('send_message', address);
   }
