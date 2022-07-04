@@ -12,7 +12,7 @@ class NestedList extends HTMLElement {
     this.parentId;
     this.titleId;
     this.priorityId;
-    
+    this.fieldModel;
   }
   connectedCallback() {
     setTimeout(() => {
@@ -27,6 +27,7 @@ class NestedList extends HTMLElement {
     this.parentId = this.getAttribute('parent-id');
     this.titleId = this.getAttribute('title-id');
     this.priorityId = this.getAttribute('priority-id');
+    this.fieldModel = this.getAttribute('field-model');
   }
   async makeNestedList() {
     let scheme = {"type":"array","id":1,"childs":[{"type":"property","id":3,"field_id": this.titleId,"property_name":"text","property_type":"field_value"},{"type":"property","id":4,"property_name":"parent","property_type":"field_value","field_id": this.parentId},{"type":"array","id":2,"childs":[{"type":"property","id":6,"property_name":"item_id","property_type":"variable","variable_type":"current_item"}, {"type":"property","id":5,"property_name":"priority","property_type":"field_value","field_id": this.priorityId}],"is_static":1,"property_name":"data"},{"type":"property","id":7,"property_type":"static","property_name":"type","static_field_value":"item"}],"app_id": this.appId,"filter":[],"property_name":"nested_array"}
@@ -59,6 +60,7 @@ class NestedList extends HTMLElement {
   }
 
   async init() {
+    this.fieldModel = this.fieldModel ? JSON.parse(this.fieldModel) : {};
     let self = this;
     let tree = await this.makeNestedList();
     let list, parentNode, movedNodeParentId, movedNode;
@@ -102,6 +104,7 @@ class NestedList extends HTMLElement {
         tree.refresh();
       }
 
+      //event on item update for update tree
       let address = {
         app_id: self.appId
       }
@@ -114,10 +117,16 @@ class NestedList extends HTMLElement {
         $(self).on('close_node.jstree', function (event, data) {
             data.instance.set_type(data.node, 'folder');
         });
-        
-        //remove selection on click
-        $(self).on("select_node.jstree", function (node, selected, event) {
-          $(self).jstree(true).deselect_all();
+        $(self).on("select_node.jstree", function (e, selected) {
+          
+          if (self.fieldModel.send_message.app_id && self.fieldModel.send_message.field_id) {
+            let [,itemId] = selected.node.data[0].item_id.split('.');
+            let address = {
+              app_id: self.fieldModel.send_message.app_id,
+              field_id: self.fieldModel.send_message.field_id,
+            }
+            gudhub.emit('send_message', address, {value: itemId});
+          }
         })
 
       $(self).on("move_node.jstree", function (node, parent) {
@@ -173,6 +182,17 @@ class NestedList extends HTMLElement {
       });
     
     });
+  }
+
+  disconnectedCallback() {
+    //remove send_message event when component is removed
+    let address = {
+      app_id: this.fieldModel.send_message.app_id,
+      field_id: this.fieldModel.send_message.field_id,
+    }
+    console.log(address)
+
+    gudhub.destroy('send_message', address);
   }
 }
 
