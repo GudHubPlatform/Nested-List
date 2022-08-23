@@ -3,40 +3,40 @@ import  './nestedList.webcomponent.js';
 export default class NestedListData {
    getTemplate() {
 
-			var fieldsTemplate = {
-  			constructor: 'field',
-				name: 'Nested List',
-				icon: 'scheduling',
-				type: 'nested_list',
-				model: {
-                    field_name: "Nested List",
-                    data_type: "nested_list",
-					data_model: {
-                        title: '',
-						use_default_value: false,
-						parent_id: '',
-                        send_message: {},
-						interpretation : [
-							{
-								src: 'form',
-								id: 'default',
-								settings:{
-									editable: 1,
-									show_field_name: 1,
-									show_field: 1
-								}
-							}
-						]
+	var fieldsTemplate = {
+		constructor: 'field',
+		name: 'Nested List',
+		icon: 'scheduling',
+		type: 'nested_list',
+		model: {
+		field_name: "Nested List",
+		data_type: "nested_list",
+		data_model: {
+				title: '',
+				use_default_value: false,
+				parent_id: '',
+				send_message: {},
+				interpretation : [
+					{
+					src: 'form',
+					id: 'default',
+					settings:{
+						editable: 1,
+						show_field_name: 1,
+						show_field: 1
+						}
 					}
-				}
-			};
-
-			return fieldsTemplate;
+				]
+			}
 		}
+	};
+
+	return fieldsTemplate;
+	}
   
       /*------------------------------- ACTION INTERPRETATION --------------------------------------*/
   
-      getInterpretation(value, appId, itemId, field_model) {
+      getInterpretation(gudhub, value, appId, itemId, field_model) {
         var interpretations = [{
             id: 'default',
             name: 'Default',
