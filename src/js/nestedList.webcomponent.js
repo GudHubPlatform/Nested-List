@@ -70,7 +70,7 @@ class NestedList extends HTMLElement {
     this.fieldModel = this.fieldModel ? JSON.parse(this.fieldModel) : {};
     let self = this;
     let tree = await this.makeNestedList();
-    let list, parentNode, movedNodeParentId, movedNode;
+    let list, parentNode, movedNodeParentId, movedNode, currentItem;
     $(function() {
       $(self).jstree({
         core : { "check_callback" : function (operation, node, parent, position, more) {
@@ -116,7 +116,19 @@ class NestedList extends HTMLElement {
         app_id: self.appId
       }
       gudhub.on('gh_items_update', address, itemUpdateCallback);
-
+      gudhub.on(
+        'gh_items_add',
+        address,
+        async function () {
+          $(self).on('model.jstree', function (event, data) {
+            $(self).on('refresh.jstree', function () {
+              let tree = $(self).jstree(true);
+              tree.deselect_all();
+              tree.select_node(data.nodes[data.nodes.length - 1]);
+            })
+          })
+        })
+        
         // change icon on opened/closed
         $(self).on('open_node.jstree', function (event, data) {
             data.instance.set_type(data.node, 'opened');
@@ -128,11 +140,12 @@ class NestedList extends HTMLElement {
           
           if (self.fieldModel.send_message.app_id && self.fieldModel.send_message.field_id) {
             let [,itemId] = selected.node.data[0].item_id.split('.');
+            currentItem = itemId
             let address = {
               app_id: self.fieldModel.send_message.app_id,
               field_id: self.fieldModel.send_message.field_id,
             }
-            gudhub.emit('send_message', address, {value: itemId});
+            gudhub.emit('send_message', address, {value: currentItem});
           }
         })
 
