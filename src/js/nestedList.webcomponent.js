@@ -69,7 +69,7 @@ class NestedList extends HTMLElement {
   async init() {
     this.fieldModel = this.fieldModel ? JSON.parse(this.fieldModel) : {};
     let self = this;
-    let tree = await this.makeNestedList();
+    let nestedList = await this.makeNestedList();
     let list, parentNode, movedNodeParentId, movedNode, currentItem;
     $(function() {
       $(self).jstree({
@@ -85,7 +85,7 @@ class NestedList extends HTMLElement {
           //we need return true if we want to allow move
           return true;
         },
-          data : tree
+          data : nestedList
         },
           "types" : {
           
@@ -99,6 +99,9 @@ class NestedList extends HTMLElement {
             'icon': folderOpenedIcon
          }
         },
+        "themes":{
+          "icons":false
+      },
         
         "plugins" : ["dnd", "types", "wholerow", "state"]
       });
@@ -111,10 +114,11 @@ class NestedList extends HTMLElement {
         tree.refresh();
       }
 
-      //event on item update for update tree
+      //event on item update and add for update tree
       let address = {
         app_id: self.appId
       }
+
       gudhub.on('gh_items_update', address, itemUpdateCallback);
       gudhub.on(
         'gh_items_add',
@@ -133,9 +137,20 @@ class NestedList extends HTMLElement {
         $(self).on('open_node.jstree', function (event, data) {
             data.instance.set_type(data.node, 'opened');
         })
+
         $(self).on('close_node.jstree', function (event, data) {
             data.instance.set_type(data.node, 'folder');
         });
+
+        $(self).on('ready.jstree', function (event, data) {
+          let tree = $(self).jstree(true);
+          let savedTree = JSON.parse(localStorage.getItem('jstree'));
+          if(!savedTree || savedTree.state.core.selected.length == 0) {
+            tree.select_node('j1_1')
+          }
+          tree.open_node('j1_1');
+        });
+
         $(self).on("select_node.jstree", function (e, selected) {
           
           if (self.fieldModel.send_message.app_id && self.fieldModel.send_message.field_id) {
