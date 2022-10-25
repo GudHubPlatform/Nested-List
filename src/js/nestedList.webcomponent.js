@@ -101,6 +101,7 @@ class NestedList extends HTMLElement {
         let tree = $(self).jstree(true);
         let newData = await self.makeNestedList();
         tree.settings.core.data = newData;
+        tree.refresh();
       }
 
       //event on item update and add for update tree
