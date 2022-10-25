@@ -16,6 +16,9 @@ export default class NestedListData {
 				use_default_value: false,
 				parent_id: '',
 				send_message: {},
+                item_icon: 'element',
+                folder_icon: 'folder',
+                icons_color: '#18a9e8',
 				interpretation : [
 					{
 					src: 'form',
@@ -59,7 +62,83 @@ export default class NestedListData {
             type: 'general_setting',
             icon: 'menu',
             columns_list: [
-                    [
+                [
+                    {
+                        type: 'ghElement',
+                        property: 'data_model.show_icon',
+                        data_model: function () {
+                            return {
+                                field_name: 'Show Icon',
+                                name_space: 'show_icon',
+                                data_type: 'boolean'
+                            };
+                        }
+                    },
+                    {
+                        type: "ghElement",
+                        property: "data_model.folder_icon",
+                        showIf: "data_model.show_icon",
+                        data_model() {
+                          return {
+                            field_name: "Folder Icon",
+                            name_space: "folder_icon",
+                            data_type: "icon",
+                            data_model: {
+                                interpretation: [{
+                                    src: 'form',
+                                    id: 'default',
+                                    settings: {
+                                        editable: 1,
+                                        show_field_name: 1,
+                                        show_field: 1,
+                                        img_type: 'canvas'
+                                    }
+                                }],
+                            }
+                          };
+                        },
+                    },
+                    {
+                        type: "ghElement",
+                        property: "data_model.item_icon",
+                        showIf: "data_model.show_icon",
+                        data_model() {
+                          return {
+                            field_name: "Item Icon",
+                            name_space: "item_icon",
+                            data_type: "icon",
+                            data_model: {
+                                interpretation: [{
+                                    src: 'form',
+                                    id: 'default',
+                                    settings: {
+                                        editable: 1,
+                                        show_field_name: 1,
+                                        show_field: 1,
+                                    }
+                                }]
+                            }
+                          };
+                        },
+                    },
+                    {
+                        type: 'ghElement',
+                        property: 'data_model.icons_color',
+                        showIf: "data_model.show_icon",
+                        data_model: function () {
+                            return {
+                                field_name: 'Icons Color',
+                                name_space: 'icons_color',
+                                data_type: 'color'
+                            };
+                        }
+                    }
+                ], 
+                [
+                    {
+                        title: 'Nested List',
+                        type: 'header'
+                    },
                     {
                         type: 'ghElement',
                         property: 'data_model.application_id',
@@ -181,33 +260,35 @@ export default class NestedListData {
                                 }
                             };
                         }
-                    },{
-                     
-                    type: 'ghElement',
-                    property: 'data_model.send_message.field_id',
-                    onInit: function (settingScope) {
-                        scope.$watch(function () {
-                            return scope.fieldModel.data_model.send_message.app_id;
-                        }, function(newValue) {
-                            settingScope.field_model.data_model.app_id = newValue;
-                        });
                     },
-                    data_model: function (fieldModel) {
-                            return {
-                                data_model: {
-                                    app_id: fieldModel.data_model.send_message.app_id,
-                                    tooltip: {
-                                        default: '<h3>Field to Send Message</h3>Here you should choice field that will receive the message.',
-                                        en: 'EN',
-                                        ua: 'UA'
+                    {
+                     
+                        type: 'ghElement',
+                        property: 'data_model.send_message.field_id',
+                        onInit: function (settingScope) {
+                            scope.$watch(function () {
+                                return scope.fieldModel.data_model.send_message.app_id;
+                            }, function(newValue) {
+                                settingScope.field_model.data_model.app_id = newValue;
+                            });
+                        },
+                        data_model: function (fieldModel) {
+                                return {
+                                    data_model: {
+                                        app_id: fieldModel.data_model.send_message.app_id,
+                                        tooltip: {
+                                            default: '<h3>Field to Send Message</h3>Here you should choice field that will receive the message.',
+                                            en: 'EN',
+                                            ua: 'UA'
+                                        },
                                     },
-                                },
-                                field_name: 'Field to Send Message',
-                                name_space: 'field_send_message',
-                                data_type: 'field'
-                            };
+                                    field_name: 'Field to Send Message',
+                                    name_space: 'field_send_message',
+                                    data_type: 'field'
+                                };
+                            }
                         }
-                    }
+
                 ]
             ]
           }];

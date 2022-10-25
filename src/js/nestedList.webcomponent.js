@@ -1,9 +1,6 @@
 import $ from "jquery";
 import 'jstree';
 import '../scss/style.scss';
-import itemIcon from '../icons/file.svg';
-import folderIcon from '../icons/folder.svg';
-import folderOpenedIcon from '../icons/folder_opened.svg';
 
 class NestedList extends HTMLElement {
   constructor() {
@@ -67,11 +64,19 @@ class NestedList extends HTMLElement {
   }
 
   async init() {
+    const iconStorage = gudhub.ghconstructor.angularInjector.get('iconsStorage');
     this.fieldModel = this.fieldModel ? JSON.parse(this.fieldModel) : {};
+    const isIcon = this.fieldModel.show_icon;
     let self = this;
     let nestedList = await this.makeNestedList();
     let list, parentNode, movedNodeParentId, movedNode, currentItem;
-    $(function() {
+
+    if(isIcon) {
+      const iconColor = self.fieldModel.icons_color ? self.fieldModel.icons_color.slice(1, self.fieldModel.icons_color.length): 'fff';
+      this.folderIcon = await iconStorage.getCanvasIcon(self.fieldModel.folder_icon, iconColor, '12px', 'canvas');
+      this.itemIcon = await iconStorage.getCanvasIcon(self.fieldModel.item_icon, iconColor, '12px', 'canvas');
+    }
+    
       $(self).jstree({
         core : { "check_callback" : function (operation, node, parent, position, more) {
           parentNode = parent;
@@ -87,21 +92,6 @@ class NestedList extends HTMLElement {
         },
           data : nestedList
         },
-          "types" : {
-          
-          "folder" : {
-            "icon" : folderIcon,
-          },
-          "item" : {
-            "icon" : itemIcon
-          },
-         'opened': {
-            'icon': folderOpenedIcon
-         }
-        },
-        "themes":{
-          "icons":false
-      },
         
         "plugins" : ["dnd", "types", "wholerow", "state"]
       });
@@ -111,7 +101,6 @@ class NestedList extends HTMLElement {
         let tree = $(self).jstree(true);
         let newData = await self.makeNestedList();
         tree.settings.core.data = newData;
-        tree.refresh();
       }
 
       //event on item update and add for update tree
@@ -132,23 +121,25 @@ class NestedList extends HTMLElement {
             })
           })
         })
-        
-        // change icon on opened/closed
-        $(self).on('open_node.jstree', function (event, data) {
-            data.instance.set_type(data.node, 'opened');
-        })
 
         $(self).on('close_node.jstree', function (event, data) {
             data.instance.set_type(data.node, 'folder');
         });
 
         $(self).on('ready.jstree', function (event, data) {
-          let tree = $(self).jstree(true);
-          let savedTree = JSON.parse(localStorage.getItem('jstree'));
-          if(!savedTree || savedTree.state.core.selected.length == 0) {
-            tree.select_node('j1_1')
+          let instance = $(self).jstree(true);
+
+          if(!instance.get_selected().length) {
+            instance.select_node('j1_1')
           }
-          tree.open_node('j1_1');
+          
+          instance.open_node('j1_1');
+          let list = instance.get_json('#', {flat:false});
+          if(isIcon) {
+            setIconForElements(list, instance);
+          } else {
+            instance.hide_icons();
+          }
         });
 
         $(self).on("select_node.jstree", function (e, selected) {
@@ -164,59 +155,68 @@ class NestedList extends HTMLElement {
           }
         })
 
-      $(self).on("move_node.jstree", function (node, parent) {
-        list = $(self).jstree(true).get_json('#', {flat:false})
-        var instance = $(self).jstree(true);
-        instance.set_type(parentNode, 'folder')
+        $(self).on("move_node.jstree", function (node, parent) {
+          let tree = $(self).jstree(true);
+          list = tree.get_json('#', {flat:false})
 
-        //get parent if it's there are and set type item if not
-        let movedNodeParent = instance.get_node(movedNodeParentId, true)
-        let childrenParent = instance.get_children_dom(movedNodeParent);
-        if(!Boolean(childrenParent.length)) {
-          instance.set_type(movedNodeParent, 'item')
-        }
-
-        //update items when moving for saving tree
-        let itemsToUpdate = [];
-        if(parent.parent !== parent.old_parent) {
-          let [,itemId] = movedNode.data[0].item_id.split('.');
-          let fieldValue;
-          if(parentNode.id == '#') {
-            fieldValue = '';
-          } else {
-            fieldValue = parentNode.data[0].item_id;
-          }
-          
-          const item = {
-            item_id: itemId,
-            fields: [{
-              field_id: self.parentId,
-              field_value: fieldValue,
-            }]
+          if(isIcon) {
+            setIconForElements(list, tree);
           }
 
-          itemsToUpdate.push(item)
-        } else {
-          function sortArrayByIndex(tree) {
-            tree.forEach((element, index) => {
-              let [,itemId] = element.data[0].item_id.split('.');
-              element.data[0].priority = index;
-              itemsToUpdate.push({item_id: itemId, "fields": [{
-                "field_id": self.priorityId,
-                "field_value": index,
-              }]})
-
-              if(element.children)
-                sortArrayByIndex(element.children)
-            });
+          //update items when moving for saving tree
+          let itemsToUpdate = [];
+          if(parent.parent !== parent.old_parent) {
+            let [,itemId] = movedNode.data[0].item_id.split('.');
+            let fieldValue;
+            if(parentNode.id == '#') {
+              fieldValue = '';
+            } else {
+              fieldValue = parentNode.data[0].item_id;
+            }
             
+            const item = {
+              item_id: itemId,
+              fields: [{
+                field_id: self.parentId,
+                field_value: fieldValue,
+              }]
+            }
+
+            itemsToUpdate.push(item)
+          } else {
+            function sortArrayByIndex(tree) {
+              tree.forEach((element, index) => {
+                let [,itemId] = element.data[0].item_id.split('.');
+                element.data[0].priority = index;
+                itemsToUpdate.push({item_id: itemId, "fields": [{
+                  "field_id": self.priorityId,
+                  "field_value": index,
+                }]})
+
+                if(element.children) {
+                  sortArrayByIndex(element.children)
+                }
+              });
+              
+            }
+            sortArrayByIndex(list);
           }
-          sortArrayByIndex(list);
+          gudhub.updateItems(self.appId, itemsToUpdate);
+        });
+
+        function setIconForElements(elements, tree) {
+          let isParentHasChildren;
+          for(let i = 0; i < elements.length; i++) {
+            isParentHasChildren = elements[i].children.length > 0;
+            if(isParentHasChildren) {
+              setIconForElements(elements[i].children, tree);
+              tree.set_icon(elements[i], self.folderIcon.toDataURL());
+            } else {
+              tree.set_icon(elements[i], self.itemIcon.toDataURL());
+            }
+          }
         }
-        gudhub.updateItems(self.appId, itemsToUpdate);
-      });
     
-    });
   }
 
   disconnectedCallback() {
