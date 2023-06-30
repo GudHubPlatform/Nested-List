@@ -19,6 +19,7 @@ export default class NestedListData {
                 item_icon: 'element',
                 folder_icon: 'folder',
                 icons_color: '#18a9e8',
+                filters_list: [],
 				interpretation : [
 					{
 					src: 'form',
@@ -289,7 +290,33 @@ export default class NestedListData {
                             }
                         }
 
-                ]
+                ],
+                [
+                    {
+                        title: 'Items Filter',
+                        type: 'header'
+                    },
+                    {
+                        type: 'html',
+    
+                        onInit: function (settingScope) {
+                            scope.$watch(function () {
+                                return scope.fieldModel.data_model.application_id;
+                            }, function(newValue) {
+                                settingScope.field_model.recipient.app_id = newValue;
+                            });
+                        },
+                        data_model: function (fieldModel) {
+                            return {
+                                recipient:{
+                                    app_id: fieldModel.data_model.app_id
+                                }
+                            };
+                        },
+                        control: '<gh-filter gh-filter-data-model="field_model" filter-list="fieldModel.data_model.filters_list" gh-mode="variable"></gh-filter>'
+                    }
+                    
+                ],
             ]
           }];
       }

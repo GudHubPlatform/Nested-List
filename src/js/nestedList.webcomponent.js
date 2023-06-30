@@ -35,7 +35,7 @@ class NestedList extends HTMLElement {
   }
 
   async makeNestedList() {
-    let scheme = {"type":"array","id":1,"childs":[{"type":"property","id":3,"field_id": this.titleId,"property_name":"text","property_type":"field_value"},{"type":"property","id":4,"property_name":"parent","property_type":"field_value","field_id": this.parentId},{"type":"array","id":2,"childs":[{"type":"property","id":6,"property_name":"item_id","property_type":"variable","variable_type":"current_item"}, {"type":"property","id":5,"property_name":"priority","property_type":"field_value","field_id": this.priorityId}],"is_static":1,"property_name":"data"},{"type":"property","id":7,"property_type":"static","property_name":"type","static_field_value":"item"}],"app_id": this.appId,"filter":[],"property_name":"nested_array"}
+    let scheme = {"type":"array","id":1,"childs":[{"type":"property","id":3,"field_id": this.titleId,"property_name":"text","property_type":"field_value"},{"type":"property","id":4,"property_name":"parent","property_type":"field_value","field_id": this.parentId},{"type":"array","id":2,"childs":[{"type":"property","id":6,"property_name":"item_id","property_type":"variable","variable_type":"current_item"}, {"type":"property","id":5,"property_name":"priority","property_type":"field_value","field_id": this.priorityId}],"is_static":1,"property_name":"data"},{"type":"property","id":7,"property_type":"static","property_name":"type","static_field_value":"item"}],"app_id": this.appId,"filter": this.fieldModel.filters_list,"property_name":"nested_array"}
     let response = await gudhub.jsonConstructor(scheme);
     let generatedModel = response.nested_array.map(element => {
       element.item_id = element.data[0].item_id;
