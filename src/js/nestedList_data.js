@@ -12,9 +12,11 @@ export default class NestedListData {
 		field_name: "Nested List",
 		data_type: "nested_list",
 		data_model: {
-				title: '',
+                app_id: '',
+				title_field_id: '',
 				use_default_value: false,
-				parent_id: '',
+				parent_field_id: '',
+                priority_field_id: '',
 				send_message: {},
                 item_icon: 'element',
                 folder_icon: 'folder',
@@ -45,7 +47,7 @@ export default class NestedListData {
             id: 'default',
             name: 'Default',
             content: () =>
-                  `<nested-list app-id="{{field_model.data_model.application_id}}" parent-id="{{field_model.data_model.parent_id}}" title-id="{{field_model.data_model.title}}" priority-id="{{field_model.data_model.priority}}" field-model="{{field_model.data_model}}"></nested-list>`
+                  `<nested-list app-id="{{field_model.data_model.app_id}}" parent-id="{{field_model.data_model.parent_field_id}}" title-id="{{field_model.data_model.title_field_id}}" priority-id="{{field_model.data_model.priority_field_id}}" field-model="{{field_model.data_model}}"></nested-list>`
           },{
             id: 'simple_icon',
             name: 'Icon',
@@ -142,11 +144,11 @@ export default class NestedListData {
                     },
                     {
                         type: 'ghElement',
-                        property: 'data_model.application_id',
+                        property: 'data_model.app_id',
                         data_model: function () {
                             return {
                                 field_name: 'App Id',
-                                name_space: 'application_id',
+                                name_space: 'app_id',
                                 data_type: 'app',
                                 data_model: {
                                     interpretation : [{
@@ -164,11 +166,11 @@ export default class NestedListData {
                     },
                     {
                         type: 'ghElement',
-                        property: 'data_model.parent_id',
+                        property: 'data_model.parent_field_id',
                         onInit: function (settingScope, fieldModel) {
     
                             settingScope.$watch(function () {
-                                return fieldModel.data_model.application_id;
+                                return fieldModel.data_model.app_id;
                             }, function(newValue) {
                                 settingScope.field_model.data_model.app_id = newValue;
                             });
@@ -178,7 +180,7 @@ export default class NestedListData {
     
                             return {
                                 data_model:{
-                                    app_id: fieldModel.data_model.application_id
+                                    app_id: fieldModel.data_model.app_id
                                 },
                                 field_name: 'Parent Id',
                                 name_space: 'field_id',
@@ -188,11 +190,11 @@ export default class NestedListData {
                     },
                     {
                         type: 'ghElement',
-                        property: 'data_model.title',
+                        property: 'data_model.title_field_id',
                         onInit: function (settingScope, fieldModel) {
     
                             settingScope.$watch(function () {
-                                return fieldModel.data_model.application_id;
+                                return fieldModel.data_model.app_id;
                             }, function(newValue) {
                                 settingScope.field_model.data_model.app_id = newValue;
                             });
@@ -202,21 +204,21 @@ export default class NestedListData {
     
                             return {
                                 data_model:{
-                                    app_id: fieldModel.data_model.application_id
+                                    app_id: fieldModel.data_model.app_id
                                 },
                                 field_name: 'Title',
-                                name_space: 'title_id',
+                                name_space: 'title_field_id',
                                 data_type: 'field'
                             };
                         }
                     },
                     {
                         type: 'ghElement',
-                        property: 'data_model.priority',
+                        property: 'data_model.priority_field_id',
                         onInit: function (settingScope, fieldModel) {
     
                             settingScope.$watch(function () {
-                                return fieldModel.data_model.application_id;
+                                return fieldModel.data_model.app_id;
                             }, function(newValue) {
                                 settingScope.field_model.data_model.app_id = newValue;
                             });
@@ -226,7 +228,7 @@ export default class NestedListData {
     
                             return {
                                 data_model:{
-                                    app_id: fieldModel.data_model.application_id
+                                    app_id: fieldModel.data_model.app_id
                                 },
                                 field_name: 'Sort By Priority',
                                 name_space: 'sort',
@@ -301,7 +303,7 @@ export default class NestedListData {
     
                         onInit: function (settingScope) {
                             scope.$watch(function () {
-                                return scope.fieldModel.data_model.application_id;
+                                return scope.fieldModel.data_model.app_id;
                             }, function(newValue) {
                                 settingScope.field_model.recipient.app_id = newValue;
                             });
