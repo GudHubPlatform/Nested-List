@@ -43,7 +43,7 @@ class NestedList extends HTMLElement {
       return element;
     })
     
-   let model = gudhub.makeNestedList(generatedModel, 'item_id', "parent", "", "priority");
+   let model = gudhub.makeNestedList(generatedModel, 'item_id', "parent", "children", "priority");
 
    // set type of generated model
    function setType (model) {
@@ -76,7 +76,7 @@ class NestedList extends HTMLElement {
       this.folderIcon = await iconStorage.getCanvasIcon(self.fieldModel.folder_icon, iconColor, '12px', 'canvas');
       this.itemIcon = await iconStorage.getCanvasIcon(self.fieldModel.item_icon, iconColor, '12px', 'canvas');
     }
-    
+   
       $(self).jstree({
         core : { "check_callback" : function (operation, node, parent, position, more) {
           parentNode = parent;
