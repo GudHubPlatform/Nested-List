@@ -58,6 +58,117 @@ export default class NestedListData {
         return interpretations;
       }
   
+      /*--------------------------  LOCALIZATION --------------------------------*/
+      getDictionary() {
+        return [
+          {
+            key: 'nested_list',
+            en: 'Nested List',
+            uk: 'Вкладений список',
+            de: 'Verschachtelte Liste',
+            fr: 'Liste imbriquée'
+          },
+          {
+            key: 'default',
+            en: 'Default',
+            uk: 'За замовчуванням',
+            de: 'Standard',
+            fr: 'Par défaut'
+          },
+          {
+            key: 'icon',
+            en: 'Icon',
+            uk: 'Іконка',
+            de: 'Symbol',
+            fr: 'Icône'
+          },
+          {
+            key: 'options',
+            en: 'Options',
+            uk: 'Параметри',
+            de: 'Optionen',
+            fr: 'Options'
+          },
+          {
+            key: 'items_filter',
+            en: 'Items Filter',
+            uk: 'Фільтр елементів',
+            de: 'Elemente-Filter',
+            fr: 'Filtre des éléments'
+          },
+          {
+            key: 'show_icon',
+            en: 'Show Icon',
+            uk: 'Показати іконку',
+            de: 'Symbol anzeigen',
+            fr: "Afficher l'icône"
+          },
+          {
+            key: 'folder_icon',
+            en: 'Folder Icon',
+            uk: 'Іконка папки',
+            de: 'Ordner-Symbol',
+            fr: 'Icône de dossier'
+          },
+          {
+            key: 'item_icon',
+            en: 'Item Icon',
+            uk: 'Іконка елемента',
+            de: 'Element-Symbol',
+            fr: "Icône d'élément"
+          },
+          {
+            key: 'icons_color',
+            en: 'Icons Color',
+            uk: 'Колір іконок',
+            de: 'Symbolfarbe',
+            fr: 'Couleur des icônes'
+          },
+          {
+            key: 'app_id',
+            en: 'App Id',
+            uk: 'Ідентифікатор додатку',
+            de: 'App-ID',
+            fr: "ID de l'application"
+          },
+          {
+            key: 'field_id',
+            en: 'Parent Id',
+            uk: 'Батьківський елемент',
+            de: 'Übergeordnetes Element',
+            fr: 'Élément parent'
+          },
+          {
+            key: 'title_field_id',
+            en: 'Title',
+            uk: 'Заголовок',
+            de: 'Titel',
+            fr: 'Titre'
+          },
+          {
+            key: 'sort',
+            en: 'Sort By Priority',
+            uk: 'Сортувати за пріоритетом',
+            de: 'Nach Priorität sortieren',
+            fr: 'Trier par priorité'
+          },
+          {
+            key: 'application_to_send_message',
+            en: 'Application to Send Message',
+            uk: 'Додаток для надсилання повідомлення',
+            de: 'Anwendung zum Senden von Nachrichten',
+            fr: 'Application pour envoyer un message'
+          },
+          {
+            key: 'field_send_message',
+            en: 'Field to Send Message',
+            uk: 'Поле для надсилання повідомлення',
+            de: 'Feld zum Senden von Nachrichten',
+            fr: 'Champ pour envoyer un message'
+          }
+        ];
+      }
+
       /*--------------------------  ACTION SETTINGS --------------------------------*/
       getSettings(scope) {
         return [{
@@ -242,6 +353,7 @@ export default class NestedListData {
                         data_model: function (fieldModel) {
                             return {
                                 field_name: 'Application to Send Message',
+                                name_space: 'application_to_send_message',
                                 data_type: 'app',
                                 data_model: {
                                     tooltip: {
